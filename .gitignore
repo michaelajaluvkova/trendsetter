@@ -3,3 +3,5 @@
 all_cards.txt
 Keywords.json
 prices_cache.json
+scryfall_json.txt
+full_data.csv

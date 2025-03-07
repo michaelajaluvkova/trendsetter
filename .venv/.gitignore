@@ -1,6 +1,0 @@
-# created by virtualenv automatically
-.env
-photos/*
-prices_cache.json
-Keywords.json
-all_cards.txt

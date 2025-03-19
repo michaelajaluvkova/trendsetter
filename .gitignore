@@ -9,3 +9,4 @@ archived_playground.py
 .DS_Store
 photos/
 !photos/hobitci4.jpg
+processed_image.jpg

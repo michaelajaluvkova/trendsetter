@@ -16,7 +16,9 @@ class CardFinder:
         pass
 
     def preprocess_image(self, file_path, output_path="processed_image.jpg"):
-        """Improves the image for OCR without destroying details."""
+        """ OCR fails when image is too huge. This is automated function which would improve
+        the image for OCR without destroying the details.
+        """
         try:
             image = cv2.imread(file_path)
             if image is None:
@@ -54,6 +56,11 @@ class CardFinder:
 
 
     def recognize_card(self, file_path=None):
+        """
+        The OCR function itself.
+        :param file_path:
+        :return: list containing card name and count of cards
+        """
         azure = Azure()
         rec = MagicRecognition(file_all_cards="all_cards.txt", file_keywords="Keywords.json")
         try:
@@ -97,6 +104,11 @@ class CardFinder:
             return None
 
     def download_daily_price_per_card(self, cardname=None):
+        """
+        Find price for each card
+        :param cardname:
+        :return: dataframe with cardname, price in EUR, USD, CZK for foil and non-foil + tix
+        """
         url = "https://api.scryfall.com/cards/named"
         params = {"exact": cardname}
         czk_eur_rate = self.get_eur_to_czk_rate()

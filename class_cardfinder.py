@@ -22,9 +22,29 @@ class CardFinder:
             print(c, k)
         return deck
 
+    def get_eur_to_czk_rate(self):
+        """Fetches the latest EUR to CZK exchange rate from the Czech National Bank."""
+        url = "https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/daily.txt"
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            print("Response Text:\n", response.text)
+
+            for line in response.text.split("\n"):
+                if "|EUR|" in line:  # More robust check
+                    parts = line.split("|")
+                    rate = float(parts[-1])
+                    return rate
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
+
     def download_daily_price_per_card(self, cardname=None):
         url = "https://api.scryfall.com/cards/named"
         params = {"exact": cardname}
+        czk_eur_rate = self.get_eur_to_czk_rate()
 
         try:
             response = requests.get(url, params=params)
@@ -35,9 +55,11 @@ class CardFinder:
             prices = card_data.get("prices", {})
             usd_price = prices.get("usd")
             usd_foil_price = prices.get("usd_foil")
-            eur_price = prices.get("eur")
-            eur_price_foil = prices.get("eur_foil")
+            eur_price = float(prices.get("eur")) if prices.get("eur") is not None else 0.0
+            eur_price_foil = float(prices.get("eur_foil")) if prices.get("eur_foil") is not None else 0.0
             tix = prices.get("tix")
+            czk_price = eur_price * czk_eur_rate
+            czk_price_foil = eur_price_foil * czk_eur_rate
 
             df = pd.DataFrame([{
                     "card_name": cardname,
@@ -45,6 +67,8 @@ class CardFinder:
                     "price_usd_foil": usd_foil_price,
                     "price_eur": eur_price,
                     "price_eur_foil": eur_price_foil,
+                    "price_czk": czk_price,
+                    "price_czk_foil": czk_price_foil,
                     "tix": tix}])
             #print(df.head())
 

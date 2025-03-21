@@ -112,6 +112,7 @@ class CardFinder:
         url = "https://api.scryfall.com/cards/named"
         params = {"exact": cardname}
         czk_eur_rate = self.get_eur_to_czk_rate()
+        df = None
 
         try:
             response = requests.get(url, params=params)
@@ -137,7 +138,6 @@ class CardFinder:
                     "price_czk": czk_price,
                     "price_czk_foil": czk_price_foil,
                     "tix": tix}])
-            #print(df.head())
 
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching data: {e}")

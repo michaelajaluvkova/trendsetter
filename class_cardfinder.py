@@ -143,6 +143,67 @@ class CardFinder:
             logging.error(f"Error fetching data: {e}")
 
         return df
+    def get_card_set(self, card_name):
+        """Returns a list of (set_name, set_code) for all printings of a given card.
+        ...for name, code in sets...
+        """
+        base_url = f"https://api.scryfall.com/cards/named?exact={card_name.replace(' ', '%20')}"
+        resp = requests.get(base_url)
+        if resp.status_code != 200:
+            print("Error:", resp.json().get("details", "Unknown error"))
+            return []
+
+        data = resp.json()
+        prints_search_uri = data.get("prints_search_uri")
+        printings_resp = requests.get(prints_search_uri)
+        if printings_resp.status_code != 200:
+            print("Error fetching printings:", printings_resp.text)
+            return []
+
+        all_printings = printings_resp.json()
+        results = set()
+
+        for card in all_printings["data"]:
+            set_name = card.get("set_name")
+            set_code = card.get("set")
+            if set_name and set_code:
+                results.add((set_name, set_code))
+        return sorted(results, key=lambda x: x[0])
+
+    def get_card_price_for_set(self, card_name, set_code):
+        """
+        Fetch the current USD price of a specific card from a specific set using Scryfall.
+        """
+        url = f"https://api.scryfall.com/cards/named?exact={card_name.replace(' ', '%20')}&set={set_code.lower()}"
+        response = requests.get(url)
+        czk_eur_rate = self.get_eur_to_czk_rate()
+
+        if response.status_code != 200:
+            print("Error:", response.json().get("details", "Unknown error"))
+            return None
+
+        card_data = response.json()
+
+        prices = card_data.get("prices", {})
+        usd_price = prices.get("usd")
+        usd_foil_price = prices.get("usd_foil")
+        eur_price = float(prices.get("eur")) if prices.get("eur") is not None else 0.0
+        eur_price_foil = float(prices.get("eur_foil")) if prices.get("eur_foil") is not None else 0.0
+        tix = prices.get("tix")
+        czk_price = eur_price * czk_eur_rate
+        czk_price_foil = eur_price_foil * czk_eur_rate
+
+        df = pd.DataFrame([{
+            "card_name": card_name,
+            "price_usd": usd_price,
+            "price_usd_foil": usd_foil_price,
+            "price_eur": eur_price,
+            "price_eur_foil": eur_price_foil,
+            "price_czk": czk_price,
+            "price_czk_foil": czk_price_foil,
+            "tix": tix}])
+
+        return df
 
 if __name__ == "__main__":
     card = CardFinder()

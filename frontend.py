@@ -12,7 +12,6 @@ if uploaded_file:
     st.image(image, caption="Uploaded image", use_column_width=True)
     st.write("Processing...")
 
-    # Save temporarily
     image_path = "temp_uploaded_image.jpg"
     image.save(image_path)
 
@@ -31,17 +30,12 @@ if uploaded_file:
 
         if all_dfs:
             result = pd.concat(all_dfs, ignore_index=True)
-
-            # Keep only necessary columns
             columns_to_keep = ['card_name', 'price_usd', 'price_usd_foil', 'price_eur',
                                'price_eur_foil', 'price_czk', 'price_czk_foil', 'tix']
             result = result.loc[:, [col for col in columns_to_keep if col in result.columns]]
-
-            # Convert prices to numeric
             result["price_czk"] = pd.to_numeric(result["price_czk"], errors="coerce")
             result_valid_prices = result.dropna(subset=["price_czk"])
 
-            # Count unique card names
             unique_card_count = result["card_name"].nunique()
 
             if not result_valid_prices.empty:
@@ -52,13 +46,11 @@ if uploaded_file:
                 result_sorted = result
                 st.warning("No valid CZK prices found to determine the most expensive card.")
 
-            # Sort full DataFrame
+            # visualisation
             result = result.sort_values(by="price_czk", ascending=False, na_position="last")
             result = result.reset_index(drop=True)  # Reset index
 
-            # Hide index in Streamlit display
             st.dataframe(result.style.hide(axis="index"))
 
-            # Provide CSV download
             csv = result.to_csv(index=False)
             st.download_button("Download CSV", csv, file_name="card_prices.csv")

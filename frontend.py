@@ -63,6 +63,23 @@ if uploaded_file:
                 st.download_button("Download CSV", csv, file_name="card_prices.csv")
 
         elif option == "Option 2":
+            """
+            Place to insert code. The code should:
+            - take the extracted card's name 
+            - create a function in class_cardfinder.py extracts all the possible sets which were released so far
+            - create a button which would have all these options available 
+            - prepare a script which would find a price for the chosen set + card name using get_card_price_for_set()
+            """
             st.write("Option 2 selected: This is just a placeholder action for now.")
+        elif option == "Option 3":
+            """
+            Place to insert code. The code should:
+            - take the extracted card's name
+            - for each card name create a button with a list of sets where the card was released in (use get_card_set() function)
+            - prepare a script which would take each card name + the chosen set, run using get_card_price_for_set() for each combination
+            - append results for each combination into dataframe
+            """
+            st.write("Option 3 selected: This is just a placeholder action for now.")
+
         else:
             st.info("Please select an option to proceed.")

@@ -9,11 +9,11 @@ uploaded_file = st.file_uploader("Upload a photo of your cards", type=["jpg", "j
 
 if uploaded_file:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded image", use_column_width=True)
+    st.image(image, caption="Uploaded image", use_container_width=True)
     st.info("Processing...")
 
     image_path = "temp_uploaded_image.jpg"
-    image.save(image_path)
+    image.convert("RGB").save(image_path)
 
     card = CardFinder()
     deck = card.recognize_card(file_path=image_path)

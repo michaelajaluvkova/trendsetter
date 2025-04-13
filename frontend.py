@@ -24,7 +24,7 @@ if uploaded_file:
         # Select option after OCR
         option = st.selectbox(
             "Choose what to do next:",
-            ["Select an option", "Option 1: Show average price", "Option 2", "Option 3"] )
+            ["Select an option", "Option 1: Show average price", "Option 2: Prices per single set", "Option 3"] )
 
         if option == "Option 1: Show average price":
             all_dfs = []
@@ -61,16 +61,37 @@ if uploaded_file:
                 csv = result.to_csv(index=False)
                 st.download_button("Download CSV", csv, file_name="card_prices.csv")
 
-        elif option == "Option 2":
-            """
-            Prices per set. 
-            Place to insert code. The code should:
-            - take the extracted card's name 
-            - use fetch_all_mtg_sets()
-            - create a button which would have all these options available 
-            - prepare a script which would find a price for the chosen set + card name using get_card_price_for_set()
-            """
-            st.write("Option 2 selected: This is just a placeholder action for now.")
+        elif option == "Option 2: Prices per single set":
+            try:
+                sets_df = card.fetch_all_mtg_sets()
+                set_display_names = [f"{row['name']} ({row['code'].upper()})" for _, row in sets_df.iterrows()]
+                selected_set_display = st.selectbox("Choose a set", set_display_names)
+
+                if selected_set_display:
+                    selected_set_code = selected_set_display.split("(")[-1].replace(")", "").strip()
+
+                    all_results = []
+                    for cardname, count in deck:
+                        df = card.get_card_price_for_set(card_name=cardname, set_code=selected_set_code)
+                        if df is not None:
+                            df["count"] = count
+                            df["set_code"] = selected_set_code.upper()
+                            all_results.append(df)
+
+                    if all_results:
+                        result_df = pd.concat(all_results, ignore_index=True)
+                        result_df = result_df.sort_values(by="price_czk", ascending=False,
+                                                          na_position="last").reset_index(drop=True)
+
+                        st.dataframe(result_df.style.hide(axis="index"))
+
+                        csv = result_df.to_csv(index=False)
+                        st.download_button("Download CSV", csv, file_name="card_prices_selected_set.csv")
+                    else:
+                        st.warning("No data found for selected set.")
+
+            except Exception as e:
+                st.error(f"Failed to fetch sets or prices: {e}")
 
         elif option == "Option 3":
             """

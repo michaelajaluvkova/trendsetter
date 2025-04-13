@@ -204,14 +204,52 @@ class CardFinder:
             "tix": tix}])
 
         return df
+    def fetch_all_mtg_sets(self):
+        """
+        Fetches all Magic: The Gathering sets from the Scryfall API and returns a pandas DataFrame.
 
-if __name__ == "__main__":
-    card = CardFinder()
-    deck = card.recognize_card(file_path="photos/hobitci4.jpg")
-    all_dataframes = []
-    for c, k in deck:
-        single_df = card.download_daily_price_per_card(cardname=c)
-        all_dataframes.append(single_df)
-    dataframe = pd.concat(all_dataframes, ignore_index=True)
-    dataframe = dataframe.sort_values(by="price_eur", ascending=True)
-    dataframe.to_csv('full_data.csv')
+        Returns:
+            pd.DataFrame: A DataFrame with columns: name, code, released_at.
+        """
+        url = "https://api.scryfall.com/sets"
+        all_sets = []
+
+        try:
+            while url:
+                response = requests.get(url)
+                response.raise_for_status()
+                data = response.json()
+
+                if "data" in data:
+                    all_sets.extend(data["data"])
+                    url = data.get("next_page")
+                else:
+                    raise Exception("Unexpected response structure from Scryfall API.")
+
+            filtered_sets = [
+                {
+                    "name": s["name"],
+                    "code": s["code"],
+                    "released_at": s["released_at"]}
+                for s in all_sets if s.get("released_at")]
+
+            df = pd.DataFrame(filtered_sets)
+            df["released_at"] = pd.to_datetime(df["released_at"])
+            df = df.sort_values(by="released_at", ascending=False).reset_index(drop=True)
+
+            return df
+
+        except requests.RequestException as e:
+            raise Exception(f"Failed to fetch sets: {e}")
+
+
+#if __name__ == "__main__":
+#    card = CardFinder()
+#    deck = card.recognize_card(file_path="photos/hobitci4.jpg")
+#    all_dataframes = []
+#    for c, k in deck:
+#        single_df = card.download_daily_price_per_card(cardname=c)
+#        all_dataframes.append(single_df)
+#   dataframe = pd.concat(all_dataframes, ignore_index=True)
+#   dataframe = dataframe.sort_values(by="price_eur", ascending=True)
+#   dataframe.to_csv('full_data.csv')

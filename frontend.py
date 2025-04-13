@@ -24,8 +24,7 @@ if uploaded_file:
         # Select option after OCR
         option = st.selectbox(
             "Choose what to do next:",
-            ["Select an option", "Option 1: Show average price", "Option 2"]
-        )
+            ["Select an option", "Option 1: Show average price", "Option 2", "Option 3"] )
 
         if option == "Option 1: Show average price":
             all_dfs = []
@@ -64,15 +63,18 @@ if uploaded_file:
 
         elif option == "Option 2":
             """
+            Prices per set. 
             Place to insert code. The code should:
             - take the extracted card's name 
-            - create a function in class_cardfinder.py extracts all the possible sets which were released so far
+            - use fetch_all_mtg_sets()
             - create a button which would have all these options available 
             - prepare a script which would find a price for the chosen set + card name using get_card_price_for_set()
             """
             st.write("Option 2 selected: This is just a placeholder action for now.")
+
         elif option == "Option 3":
             """
+            Prices per card per set.
             Place to insert code. The code should:
             - take the extracted card's name
             - for each card name create a button with a list of sets where the card was released in (use get_card_set() function)

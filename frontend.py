@@ -101,15 +101,64 @@ if uploaded_file:
                 st.error(f"Failed to fetch sets or prices: {e}")
 
         elif option == "Option 3":
-            """
-            Prices per card per set.
-            Place to insert code. The code should:
-            - take the extracted card's name
-            - for each card name create a button with a list of sets where the card was released in (use get_card_set() function)
-            - prepare a script which would take each card name + the chosen set, run using get_card_price_for_set() for each combination
-            - append results for each combination into dataframe
-            """
-            st.write("Option 3 selected: This is just a placeholder action for now.")
+            set_selections = {}
+            all_ready = True
+
+            for idx, (cardname, count) in enumerate(deck):
+                # Create a unique key for each dropdown to persist selection
+                dropdown_key = f"set_selection_{idx}_{cardname}"
+
+                if dropdown_key not in st.session_state:
+                    sets = card.get_card_set(cardname)
+                    if not sets:
+                        st.warning(f"No sets found for card: {cardname}")
+                        all_ready = False
+                        continue
+                    st.session_state[dropdown_key + "_options"] = [f"{name} ({code})" for name, code in sets]
+
+                set_option_list = st.session_state.get(dropdown_key + "_options", [])
+                if not set_option_list:
+                    st.warning(f"Set options not available for {cardname}.")
+                    all_ready = False
+                    continue
+
+                selected_set_display = st.selectbox(
+                    f"Select set for **{cardname}**",
+                    set_option_list,
+                    key=dropdown_key
+                )
+
+                if selected_set_display:
+                    set_code = selected_set_display.split("(")[-1].replace(")", "").strip()
+                    set_selections[cardname] = (set_code, count)
+                else:
+                    all_ready = False
+
+            if all_ready and set_selections:
+                st.success("All sets selected. Fetching prices...")
+
+                results = []
+                for cardname, (set_code, count) in set_selections.items():
+                    df = card.get_card_price_for_set(cardname, set_code)
+                    if df is not None:
+                        df["count"] = count
+                        df["set_code"] = set_code.upper()
+                        results.append(df)
+
+                if results:
+                    final_df = pd.concat(results, ignore_index=True)
+                    final_df = final_df.sort_values(by="price_czk", ascending=False, na_position="last").reset_index(drop=True)
+
+                    st.dataframe(final_df.style.hide(axis="index"))
+                    csv = final_df.to_csv(index=False)
+                    st.download_button("Download CSV", csv, file_name="card_prices_custom_sets.csv")
+                else:
+                    st.warning("No prices found for selected cards and sets.")
+            elif not set_selections:
+                st.info("No cards available for set selection.")
+            else:
+                st.info("Please make selections for all cards.")
+
 
         else:
             st.info("Please select an option to proceed.")

@@ -28,7 +28,8 @@ if uploaded_file:
 
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded image", use_container_width=True)
-    st.info("Processing...")
+    processing_message = st.empty()
+    processing_message.info("Processing...")
 
     image_path = "temp_uploaded_image.jpg"
     image.convert("RGB").save(image_path)
@@ -48,6 +49,7 @@ if uploaded_file:
 
     else:
         # select options after OCR
+        processing_message.empty()
         option = st.selectbox(
             "Choose what to do next:",
             ["Select an option", "Option 1: Show average price", "Option 2: Prices per single set", "Option 3: Prices per card per set"] )

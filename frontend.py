@@ -15,8 +15,18 @@ if uploaded_file:
     image_path = "temp_uploaded_image.jpg"
     image.convert("RGB").save(image_path)
 
-    card = CardFinder()
-    deck = card.recognize_card(file_path=image_path)
+    if "card" not in st.session_state:
+        st.session_state.card = CardFinder()
+    card = st.session_state.card
+
+    #card = CardFinder()
+    #deck = card.recognize_card(file_path=image_path)
+    if "deck" not in st.session_state:
+        card = CardFinder()
+        deck = card.recognize_card(file_path=image_path)
+        st.session_state.deck = deck
+    else:
+        deck = st.session_state.deck
 
     if not deck:
         st.error("No cards recognized. Try another image.")
@@ -55,9 +65,7 @@ if uploaded_file:
                 # visualisation
                 result = result.sort_values(by="price_czk", ascending=False, na_position="last")
                 result = result.reset_index(drop=True)  # Reset index
-
                 st.dataframe(result.style.hide(axis="index"))
-
                 csv = result.to_csv(index=False)
                 st.download_button("Download CSV", csv, file_name="card_prices.csv")
 
@@ -84,7 +92,6 @@ if uploaded_file:
                                                           na_position="last").reset_index(drop=True)
 
                         st.dataframe(result_df.style.hide(axis="index"))
-
                         csv = result_df.to_csv(index=False)
                         st.download_button("Download CSV", csv, file_name="card_prices_selected_set.csv")
                     else:

@@ -2,12 +2,30 @@ import streamlit as st
 from PIL import Image
 import pandas as pd
 from class_cardfinder import CardFinder
+import hashlib
+
+def get_file_hash(file):
+    return hashlib.md5(file.getvalue()).hexdigest()
 
 st.title("Trend Setter")
-
 uploaded_file = st.file_uploader("Upload a photo of your cards", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
+    file_hash = get_file_hash(uploaded_file)
+    # check if it's a new image
+    if st.session_state.get("last_file_hash") != file_hash:
+        st.session_state.last_file_hash = file_hash
+        st.session_state.card = CardFinder()
+        st.session_state.deck = None
+
+        # clean any card-specific dropdowns for Option 3
+        keys_to_delete = [key for key in st.session_state.keys() if key.startswith("set_selection_")]
+        for key in keys_to_delete:
+            if key in st.session_state:
+                del st.session_state[key]
+            if key + "_options" in st.session_state:
+                del st.session_state[key + "_options"]
+
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded image", use_container_width=True)
     st.info("Processing...")
@@ -15,26 +33,24 @@ if uploaded_file:
     image_path = "temp_uploaded_image.jpg"
     image.convert("RGB").save(image_path)
 
-    if "card" not in st.session_state:
+    if st.session_state.card is None:
         st.session_state.card = CardFinder()
     card = st.session_state.card
 
-    #card = CardFinder()
-    #deck = card.recognize_card(file_path=image_path)
-    if "deck" not in st.session_state:
+    if st.session_state.deck is None:
         card = CardFinder()
         deck = card.recognize_card(file_path=image_path)
         st.session_state.deck = deck
-    else:
-        deck = st.session_state.deck
+    deck = st.session_state.deck
 
     if not deck:
         st.error("No cards recognized. Try another image.")
+
     else:
-        # Select option after OCR
+        # select options after OCR
         option = st.selectbox(
             "Choose what to do next:",
-            ["Select an option", "Option 1: Show average price", "Option 2: Prices per single set", "Option 3"] )
+            ["Select an option", "Option 1: Show average price", "Option 2: Prices per single set", "Option 3: Prices per card per set"] )
 
         if option == "Option 1: Show average price":
             all_dfs = []
@@ -100,12 +116,11 @@ if uploaded_file:
             except Exception as e:
                 st.error(f"Failed to fetch sets or prices: {e}")
 
-        elif option == "Option 3":
+        elif option == "Option 3: Prices per card per set":
             set_selections = {}
             all_ready = True
 
             for idx, (cardname, count) in enumerate(deck):
-                # Create a unique key for each dropdown to persist selection
                 dropdown_key = f"set_selection_{idx}_{cardname}"
 
                 if dropdown_key not in st.session_state:
@@ -125,8 +140,7 @@ if uploaded_file:
                 selected_set_display = st.selectbox(
                     f"Select set for **{cardname}**",
                     set_option_list,
-                    key=dropdown_key
-                )
+                    key=dropdown_key)
 
                 if selected_set_display:
                     set_code = selected_set_display.split("(")[-1].replace(")", "").strip()

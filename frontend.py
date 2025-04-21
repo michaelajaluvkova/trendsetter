@@ -105,9 +105,15 @@ if uploaded_file:
                             all_results.append(df)
 
                     if all_results:
+                        #### adding markdown line for highest price
+
                         result_df = pd.concat(all_results, ignore_index=True)
                         result_df = result_df.sort_values(by="price_czk", ascending=False,
                                                           na_position="last").reset_index(drop=True)
+                        top_card = result_df.iloc[0]
+                        unique_card_count = result_df["card_name"].nunique()
+
+                        st.markdown(f"Out of the **{unique_card_count}** cards shown, the most expensive card is **{top_card['card_name']}** with a price around **{top_card['price_czk']:.2f} CZK**.")
 
                         st.dataframe(result_df.style.hide(axis="index"))
                         csv = result_df.to_csv(index=False)
@@ -164,6 +170,11 @@ if uploaded_file:
                 if results:
                     final_df = pd.concat(results, ignore_index=True)
                     final_df = final_df.sort_values(by="price_czk", ascending=False, na_position="last").reset_index(drop=True)
+                    top_card = final_df.iloc[0]
+                    unique_card_count = final_df["card_name"].nunique()
+
+                    st.markdown(
+                        f"Out of the **{unique_card_count}** cards shown, the most expensive card is **{top_card['card_name']}** with a price around **{top_card['price_czk']:.2f} CZK**.")
 
                     st.dataframe(final_df.style.hide(axis="index"))
                     csv = final_df.to_csv(index=False)

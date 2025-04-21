@@ -64,8 +64,8 @@ if uploaded_file:
 
             if all_dfs:
                 result = pd.concat(all_dfs, ignore_index=True)
-                columns_to_keep = ['card_name', 'price_usd', 'price_usd_foil', 'price_eur',
-                                   'price_eur_foil', 'price_czk', 'price_czk_foil', 'tix']
+                columns_to_keep = ['card_name', 'price_czk', 'price_czk_foil', 'price_eur',
+                                   'price_eur_foil', 'price_usd', 'price_usd_foil',  'tix']
                 result = result.loc[:, [col for col in columns_to_keep if col in result.columns]]
                 result["price_czk"] = pd.to_numeric(result["price_czk"], errors="coerce")
                 result_valid_prices = result.dropna(subset=["price_czk"])

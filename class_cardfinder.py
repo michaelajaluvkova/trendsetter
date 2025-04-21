@@ -131,12 +131,12 @@ class CardFinder:
 
             df = pd.DataFrame([{
                     "card_name": cardname,
-                    "price_usd": usd_price,
-                    "price_usd_foil": usd_foil_price,
-                    "price_eur": eur_price,
-                    "price_eur_foil": eur_price_foil,
                     "price_czk": czk_price,
                     "price_czk_foil": czk_price_foil,
+                    "price_eur": eur_price,
+                    "price_eur_foil": eur_price_foil,
+                    "price_usd": usd_price,
+                    "price_usd_foil": usd_foil_price,
                     "tix": tix}])
 
         except requests.exceptions.RequestException as e:
@@ -195,12 +195,12 @@ class CardFinder:
 
         df = pd.DataFrame([{
             "card_name": card_name,
-            "price_usd": usd_price,
-            "price_usd_foil": usd_foil_price,
-            "price_eur": eur_price,
-            "price_eur_foil": eur_price_foil,
             "price_czk": czk_price,
             "price_czk_foil": czk_price_foil,
+            "price_eur": eur_price,
+            "price_eur_foil": eur_price_foil,
+            "price_usd": usd_price,
+            "price_usd_foil": usd_foil_price,
             "tix": tix}])
 
         return df

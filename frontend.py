@@ -8,7 +8,7 @@ def get_file_hash(file):
     return hashlib.md5(file.getvalue()).hexdigest()
 
 st.title("Trend Setter")
-uploaded_file = st.file_uploader("Upload a photo of your cards", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload a photo of your cards here, and wait for the magic!", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
     file_hash = get_file_hash(uploaded_file)

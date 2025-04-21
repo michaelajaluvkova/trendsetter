@@ -8,6 +8,29 @@ def get_file_hash(file):
     return hashlib.md5(file.getvalue()).hexdigest()
 
 st.title("Trend Setter")
+st.markdown("""
+Welcome to **Trend Setter** – your Magic: The Gathering card price companion!
+
+**How to use?**
+- Upload a clear **photo of your Magic cards**. You can use your phone, just ensure good lighting and focus.
+- The app will automatically detect and list the cards using Optical Character Recognition.
+
+**What this app does?**
+- Uses open-source [mtgscan](https://github.com/fortierq/mtgscan) library, based on [Azure Cognitive Services](https://azure.microsoft.com/en-us/products/ai-services), to recognize Magic: The Gathering cards from your image.
+- Fetches live price data for each card (CZK, EUR, USD, Foil & Non-foil and tix), the cards are ordered from the most to the least expensive
+- You can:
+    - See average prices across sets for all cards in the photo
+    - See prices for all cards from a single specific set.
+    - See prices for various sets for various cards.
+
+**Where do prices come from?**
+We fetch data in real time from the [Scryfall API](https://scryfall.com/docs/api), which takes it from TCGPlayer for USD and Cardmarket for EUR. Tix prices are taken from CardHoarder.
+CZK prices are converted via CZK/EUR exchange rate from ČNB.
+The prices on Scryfall are updated once per day.
+
+The Trend Setter does **not** store any data.
+Once your image is uploaded, select what you'd like to do from the dropdown menu. 
+""")
 uploaded_file = st.file_uploader("Upload a photo of your cards here, and wait for the magic!", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:

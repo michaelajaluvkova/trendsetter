@@ -3,24 +3,18 @@ from PIL import Image
 import pandas as pd
 from class_cardfinder import CardFinder
 import hashlib
-import os
-from dotenv import load_dotenv
+import streamlit.components.v1 as components
 
 ### setting up google analytics
 
-GA_SCRIPT = f"""
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LP7FHK8ZNN"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{dataLayer.push(arguments);}}
-  gtag('js', new Date());
-  
-  gtag('config', 'G-LP7FHK8ZNN');
-</script>
-"""
-st.markdown(GA_SCRIPT, unsafe_allow_html=True)
-
+GA_ID = "G-LP7FHK8ZNN"
+components.html(
+    f"""
+    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+    <script async src="https://cdn.jsdelivr.net/gh/michaelajaluvkova/trendsetter@main/ga-init.js"></script>
+    """,
+    height=0,
+    width=0,)
 
 def get_file_hash(file):
     return hashlib.md5(file.getvalue()).hexdigest()

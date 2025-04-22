@@ -12,17 +12,20 @@ GA_ID = os.getenv('GA_ID')
 if not GA_ID and "GA_ID" in st.secrets:
     GA_ID = st.secrets["GA_ID"]
 
-GA_SCRIPT = f"""
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{dataLayer.push(arguments);}}
-  gtag('js', new Date());
-  gtag('config', '{GA_ID}');
-</script>
-"""
-st.markdown(GA_SCRIPT, unsafe_allow_html=True)
+if GA_ID:
+    GA_SCRIPT = f"""
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){{dataLayer.push(arguments);}}
+      gtag('js', new Date());
+      gtag('config', '{GA_ID}');
+    </script>
+    """
+    st.markdown(GA_SCRIPT, unsafe_allow_html=True)
+else:
+    st.warning("Google Analytics ID not found. Please set GA_ID in .env or Streamlit secrets.")
 
 
 def get_file_hash(file):

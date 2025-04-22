@@ -3,6 +3,24 @@ from PIL import Image
 import pandas as pd
 from class_cardfinder import CardFinder
 import hashlib
+import os
+from dotenv import load_dotenv
+
+### setting up google analytics
+load_dotenv()
+GA_ID = os.getenv('GA_ID')
+GA_SCRIPT = f"""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA_ID}');
+</script>
+"""
+st.markdown(GA_SCRIPT, unsafe_allow_html=True)
+
 
 def get_file_hash(file):
     return hashlib.md5(file.getvalue()).hexdigest()

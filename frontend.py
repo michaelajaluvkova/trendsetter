@@ -30,7 +30,7 @@ The prices on Scryfall are updated once per day.
 
 The Trend Setter does **not** store any data.
 Once your image is uploaded, select what you'd like to do from the dropdown menu. 
-If you'd like to share a feedback, please use this [form](https://docs.google.com/forms/d/e/1FAIpQLSeFbA1Gs2EIDQ1Qz-WbFmO1Z0UlpF9kHgvFuTz8xSXxKM4I4Q/viewform?usp=sharing). 
+If you'd like to **share a feedback**, please use this [form](https://docs.google.com/forms/d/e/1FAIpQLSeFbA1Gs2EIDQ1Qz-WbFmO1Z0UlpF9kHgvFuTz8xSXxKM4I4Q/viewform?usp=sharing). 
 Thanks!
 """)
 uploaded_file = st.file_uploader("Upload a photo of your cards here, and wait for the magic!", type=["jpg", "jpeg", "png"])

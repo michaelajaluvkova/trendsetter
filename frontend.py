@@ -7,25 +7,19 @@ import os
 from dotenv import load_dotenv
 
 ### setting up google analytics
-load_dotenv()
-GA_ID = os.getenv('GA_ID')
-if not GA_ID and "GA_ID" in st.secrets:
-    GA_ID = st.secrets["GA_ID"]
 
-if GA_ID:
-    GA_SCRIPT = f"""
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){{dataLayer.push(arguments);}}
-      gtag('js', new Date());
-      gtag('config', '{GA_ID}', {{ 'debug_mode': true }});
-    </script>
-    """
-    st.markdown(GA_SCRIPT, unsafe_allow_html=True)
-else:
-    st.warning("Google Analytics ID not found. Please set GA_ID in .env or Streamlit secrets.")
+GA_SCRIPT = f"""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LP7FHK8ZNN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  
+  gtag('config', 'G-LP7FHK8ZNN');
+</script>
+"""
+st.markdown(GA_SCRIPT, unsafe_allow_html=True)
 
 
 def get_file_hash(file):

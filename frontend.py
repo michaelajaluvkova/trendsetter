@@ -8,13 +8,15 @@ import streamlit.components.v1 as components
 ### setting up google analytics
 
 GA_ID = "G-LP7FHK8ZNN"
-components.html(
+
+st.markdown(
     f"""
     <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+    <!-- external init so CSP stays happy -->
     <script async src="https://cdn.jsdelivr.net/gh/michaelajaluvkova/trendsetter@main/ga-init.js"></script>
     """,
-    height=0,
-    width=0,)
+    unsafe_allow_html=True,
+)
 
 def get_file_hash(file):
     return hashlib.md5(file.getvalue()).hexdigest()

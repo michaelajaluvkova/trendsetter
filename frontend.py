@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 ### setting up google analytics
 load_dotenv()
 GA_ID = os.getenv('GA_ID')
+if not GA_ID and "GA_ID" in st.secrets:
+    GA_ID = st.secrets["GA_ID"]
+
 GA_SCRIPT = f"""
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>

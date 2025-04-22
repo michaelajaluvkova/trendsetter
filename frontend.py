@@ -11,9 +11,13 @@ GA_ID = "G-LP7FHK8ZNN"
 
 st.markdown(
     f"""
+    <!-- Google tag loader -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
-    <!-- external init so CSP stays happy -->
-    <script async src="https://cdn.jsdelivr.net/gh/michaelajaluvkova/trendsetter@main/ga-init.js"></script>
+
+    <!-- GA bootstrap (lives in your repo) -->
+    <script async
+            src="https://cdn.jsdelivr.net/gh/michaelajaluvkova/trendsetter@main/ga-init.js">
+    </script>
     """,
     unsafe_allow_html=True,
 )

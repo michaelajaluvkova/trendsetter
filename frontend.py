@@ -20,7 +20,7 @@ if GA_ID:
       window.dataLayer = window.dataLayer || [];
       function gtag(){{dataLayer.push(arguments);}}
       gtag('js', new Date());
-      gtag('config', '{GA_ID}');
+      gtag('config', '{GA_ID}', {{ 'debug_mode': true }});
     </script>
     """
     st.markdown(GA_SCRIPT, unsafe_allow_html=True)

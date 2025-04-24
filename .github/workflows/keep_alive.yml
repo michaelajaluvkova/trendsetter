@@ -17,15 +17,13 @@ jobs:
           sed -i '/# KEEP_ALIVE_TIMESTAMP/d' frontend.py
           echo "# KEEP_ALIVE_TIMESTAMP: $(date)" >> frontend.py
 
-      - name: Commit and push changes using create-pull-request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-          commit-message: "Keep alive: timestamp update"
-          title: "Keep alive commit"
-          body: "Automated timestamp update to keep the Streamlit app alive."
-          base: main
-          push-to-fork: false
-          delete-branch: true
-          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+      - name: Commit and push changes
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git add frontend.py
+          git commit -m "Keep alive: timestamp update" || echo "No changes to commit"
+          git push origin HEAD:main

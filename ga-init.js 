@@ -1,8 +1,0 @@
-/* ga‑init.js  – called by Streamlit at run‑time */
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G‑LP7FHK8ZNN', {
-  send_page_view: true,   // default, but explicit is clearer
-  debug_mode: true        // shows useful console messages while testing
-});

@@ -1,0 +1,23 @@
+name: Keep Streamlit App Alive
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' 
+  workflow_dispatch:  
+
+jobs:
+  keep_alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update timestamp comment in frontend.py
+        run: |
+          sed -i '/# KEEP_ALIVE_TIMESTAMP/d' frontend.py
+          echo "# KEEP_ALIVE_TIMESTAMP: $(date)" >> frontend.py
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add frontend.py
+          git commit -m "Keep alive: timestamp update"
+          git push

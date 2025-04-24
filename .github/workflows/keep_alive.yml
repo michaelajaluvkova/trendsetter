@@ -20,10 +20,13 @@ jobs:
       - name: Commit and push changes using create-pull-request
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GH_TOKEN }}
           commit-message: "Keep alive: timestamp update"
           branch: main
-          token: ${{ secrets.GH_TOKEN }}
-          title: "Keep alive commit"
-          body: "Automated timestamp update to keep the Streamlit app alive."
           push-to-fork: false
           delete-branch: false
+          title: "Keep alive commit"
+          body: "Automated timestamp update to keep the Streamlit app alive."
+          base: main
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>

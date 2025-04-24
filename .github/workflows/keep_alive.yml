@@ -2,7 +2,7 @@ name: Keep Streamlit App Alive
 
 on:
   schedule:
-    - cron: '0 */12 * * *' 
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 jobs:
@@ -22,11 +22,10 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           commit-message: "Keep alive: timestamp update"
-          branch: main
-          push-to-fork: false
-          delete-branch: false
           title: "Keep alive commit"
           body: "Automated timestamp update to keep the Streamlit app alive."
           base: main
+          push-to-fork: false
+          delete-branch: true
           committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
           author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>

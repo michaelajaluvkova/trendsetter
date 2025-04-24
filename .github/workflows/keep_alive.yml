@@ -3,7 +3,7 @@ name: Keep Streamlit App Alive
 on:
   schedule:
     - cron: '0 */12 * * *' 
-  workflow_dispatch:  
+  workflow_dispatch:
 
 jobs:
   keep_alive:
@@ -17,18 +17,15 @@ jobs:
           sed -i '/# KEEP_ALIVE_TIMESTAMP/d' frontend.py
           echo "# KEEP_ALIVE_TIMESTAMP: $(date)" >> frontend.py
 
-      - name: Debug git remote URL
-        run: |
-          git remote -v  # See what remote is currently set to
-
       - name: Commit and push changes
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
-          git remote -v  # Confirm the URL is correct now
+          git remote remove origin  # REMOVE the default remote first
+          git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git remote -v  # Verify the remote URL now uses the token
           git add frontend.py
           git commit -m "Keep alive: timestamp update" || echo "No changes to commit"
           git push origin HEAD:main
